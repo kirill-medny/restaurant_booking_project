@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Restaurants</h1>
+  <ul>
+    {% for restaurant in restaurants %}
+      <li><a href="{% url 'restaurant_detail' restaurant.pk %}">{{ restaurant.name }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if user.is_staff %}
+    <a href="{% url 'restaurant_create' %}">Add Restaurant</a>
+  {% endif %}
+{% endblock %}

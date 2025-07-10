@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>My Bookings</h1>
+  <ul>
+    {% for booking in bookings %}
+      <li>
+        {{ booking.table.restaurant.name }} - {{ booking.date }} at {{ booking.time }}
+        (Guests: {{ booking.number_of_guests }})
+        {% if booking.comments %}
+          <p>Comments: {{ booking.comments }}</p>
+        {% endif %}
+        <a href="{% url 'booking_cancel' booking.id %}">Cancel Booking</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
