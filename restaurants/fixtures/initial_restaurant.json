@@ -1,0 +1,43 @@
+[
+    {
+    "model": "restaurants.restaurant",
+    "pk": 1,
+    "fields": {
+      "name": "Ресторан 'Уютный уголок'",
+      "description": "Прекрасный ресторан с изысканной кухней и уютной атмосферой.",
+      "address": "Улица Пушкина, дом Колотушкина",
+      "phone_number": "+79991234567",
+      "owner": 1,
+      "cuisine": "Итальянская",
+      "price_range": "$$$"
+    }
+  },
+  {
+    "model": "restaurants.table",
+    "pk": 1,
+    "fields": {
+      "restaurant": 1,
+      "table_number": 1,
+      "capacity": 4,
+      "location": "Около окна",
+      "x_coordinate": 100,
+      "y_coordinate": 100,
+      "width": 60,
+      "height": 60
+    }
+  },
+  {
+    "model": "restaurants.table",
+    "pk": 2,
+    "fields": {
+      "restaurant": 1,
+      "table_number": 2,
+      "capacity": 2,
+      "location": "У входа",
+      "x_coordinate": 200,
+      "y_coordinate": 100,
+      "width": 40,
+      "height": 40
+    }
+  }
+]

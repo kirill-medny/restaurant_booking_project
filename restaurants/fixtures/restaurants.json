@@ -1,0 +1,43 @@
+[
+  {
+    "model": "restaurants.restaurant",
+    "pk": 1,
+    "fields": {
+      "name": "Delicious Restaurant",
+      "description": "A cozy place with amazing food.",
+      "address": "123 Main St, Anytown",
+      "phone_number": "555-123-4567",
+      "owner": 1,
+      "cuisine": "Italian",
+      "price_range": "$$"
+    }
+  },
+  {
+    "model": "restaurants.table",
+    "pk": 1,
+    "fields": {
+      "restaurant": 1,
+      "table_number": 1,
+      "capacity": 4,
+      "location": "Window",
+      "x_coordinate": 100,
+      "y_coordinate": 100,
+      "width": 80,
+      "height": 80
+    }
+  },
+  {
+    "model": "restaurants.table",
+    "pk": 2,
+    "fields": {
+      "restaurant": 1,
+      "table_number": 2,
+      "capacity": 2,
+      "location": "Center",
+      "x_coordinate": 300,
+      "y_coordinate": 200,
+      "width": 60,
+      "height": 60
+    }
+  }
+]

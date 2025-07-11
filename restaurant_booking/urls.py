@@ -1,9 +1,10 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('bookings/', include('bookings.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('', include('restaurants.urls')), # Главный URL ведет к ресторанам
+    path("admin/", admin.site.urls),
+    path("bookings/", include("bookings.urls", namespace="bookings")),
+    path("accounts/", include("accounts.urls", namespace="accounts")),
+    path("", include("restaurants.urls", namespace="restaurants")),  # Главный URL ведет к ресторанам
 ]
+

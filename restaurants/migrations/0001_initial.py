@@ -15,30 +15,60 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Restaurant',
+            name="Restaurant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('address', models.CharField(max_length=255)),
-                ('phone_number', models.CharField(max_length=20)),
-                ('cuisine', models.CharField(blank=True, max_length=100, null=True)),
-                ('price_range', models.CharField(blank=True, max_length=50, null=True)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='restaurants', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                ("address", models.CharField(max_length=255)),
+                ("phone_number", models.CharField(max_length=20)),
+                ("cuisine", models.CharField(blank=True, max_length=100, null=True)),
+                ("price_range", models.CharField(blank=True, max_length=50, null=True)),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="restaurants",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Table',
+            name="Table",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('table_number', models.IntegerField()),
-                ('capacity', models.IntegerField()),
-                ('location', models.CharField(blank=True, max_length=100, null=True)),
-                ('x_coordinate', models.IntegerField(default=0)),
-                ('y_coordinate', models.IntegerField(default=0)),
-                ('width', models.IntegerField(default=50)),
-                ('height', models.IntegerField(default=50)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tables', to='restaurants.restaurant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("table_number", models.IntegerField()),
+                ("capacity", models.IntegerField()),
+                ("location", models.CharField(blank=True, max_length=100, null=True)),
+                ("x_coordinate", models.IntegerField(default=0)),
+                ("y_coordinate", models.IntegerField(default=0)),
+                ("width", models.IntegerField(default=50)),
+                ("height", models.IntegerField(default=50)),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tables",
+                        to="restaurants.restaurant",
+                    ),
+                ),
             ],
         ),
     ]
