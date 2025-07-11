@@ -1,0 +1,52 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$8PN6D9fIQ484TjTjxKjxkm$jn1/4LoomjI/lK7wVj6rXkR8z0qjXvA+gcqEaYkyYd0=",
+      "is_superuser": true,
+      "username": "admine",
+      "first_name": "Admin",
+      "last_name": "User",
+      "email": "admin@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.profile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "phone_number": "123-456-7890"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$390000$jN48h6YgX9k0K9gXb4jX8j$Wk6b1vC5l5t9p3v3l7v0eL0z1q7w2k0jW7i8L1q6o0=",
+      "is_superuser": false,
+      "username": "john",
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john.doe@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-01-02T00:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.profile",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "phone_number": "987-654-3210"
+    }
+  }
+]

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>{{ restaurant.name }}</h1>
+  <p>{{ restaurant.description }}</p>
+  <p>Address: {{ restaurant.address }}</p>
+  <p>Phone: {{ restaurant.phone_number }}</p>
+
+  <h2>Choose a Table</h2>
+  <div id="table-plan" style="position: relative; width: 600px; height: 400px; background-image: url({% static 'images/restaurant_plan.png' %});">
+      {% for table in restaurant.tables.all %}
+          <div class="table" data-table-id="{{ table.id }}"
+               style="position: absolute; left: {{ table.x_coordinate }}px; top: {{ table.y_coordinate }}px; width: {{ table.width }}px; height: {{ table.height }}px; background-color: rgba(0, 123, 255, 0.5); cursor: pointer; text-align: center; color: white;">
+              {{ table.table_number }}
+
+              <form id="booking-form" method="get" action="{% url 'bookings:booking_create' table.id %}">
+                  <input type="hidden" id="selected_table_id" name="table_id" value="{{ table.id }}">
+                  <button type="submit" id="book-button">Book Table {{ table.table_number }}</button>
+              </form>
+          </div>
+      {% endfor %}
+  </div>
+
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const tables = document.querySelectorAll('.table');
+        const selectedTableIdInput = document.getElementById('selected_table_id');
+        const bookButton = document.getElementById('book-button');
+
+        tables.forEach(table => {
+            table.addEventListener('click', function() {
+                // Remove active class from all tables
+                tables.forEach(t => t.classList.remove('active'));
+
+                // Add active class to the selected table
+                this.classList.add('active');
+
+                // Set the value of the hidden input
+                selectedTableIdInput.value = this.dataset.tableId;
+
+                // Enable the book button
+                bookButton.disabled = false;
+
+            });
+        });
+
+            // Prevent the default form submission
+        const bookingForm = document.getElementById('booking-form');
+        bookingForm.addEventListener('submit', function(event) {
+            if (!selectedTableIdInput.value) {
+                alert('Please select a table.');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+{% endblock %}

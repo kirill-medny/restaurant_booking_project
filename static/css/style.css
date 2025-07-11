@@ -1,0 +1,26 @@
+body {
+    font-family: sans-serif;
+}
+
+nav {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+nav a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+.table {
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    background-color: rgba(0, 123, 255, 0.5);
+}
+
+.table.active {
+    background-color: rgba(0, 0, 255, 0.8);
+}
