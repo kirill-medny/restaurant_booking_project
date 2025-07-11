@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+
 from bookings.models import Booking
+
 from .models import Restaurant, Table
 
 
@@ -18,7 +20,7 @@ class BookingForm(forms.ModelForm):
         cleaned_data = super().clean()
         date = cleaned_data.get("date")
         time = cleaned_data.get("time")
-        number_of_guests = cleaned_data.get("number_of_guests")
+        number_of_guests = cleaned_data.get("number_of_guests")  # noqa
         table = self.instance.table  # Получаем столик из инстанса формы
 
         if date and time and table:
