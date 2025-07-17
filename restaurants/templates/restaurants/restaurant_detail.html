@@ -2,57 +2,128 @@
 {% load static %}
 
 {% block content %}
-  <h1>{{ restaurant.name }}</h1>
-  <p>{{ restaurant.description }}</p>
-  <p>Address: {{ restaurant.address }}</p>
-  <p>Phone: {{ restaurant.phone_number }}</p>
 
-  <h2>Choose a Table</h2>
-  <div id="table-plan" style="position: relative; width: 600px; height: 400px; background-image: url({% static 'images/restaurant_plan.png' %});">
-      {% for table in restaurant.tables.all %}
-          <div class="table" data-table-id="{{ table.id }}"
-               style="position: absolute; left: {{ table.x_coordinate }}px; top: {{ table.y_coordinate }}px; width: {{ table.width }}px; height: {{ table.height }}px; background-color: rgba(0, 123, 255, 0.5); cursor: pointer; text-align: center; color: white;">
-              {{ table.table_number }}
+<div class="row justify-content-center">
+    <!-- Колонка с информацией о ресторане -->
+    <div class="col-lg-5 col-md-7 mb-4">
+        <div class="card shadow-lg h-100 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h1 class="card-title mb-0">{{ restaurant.name }}</h1>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-muted">{{ restaurant.description }}</p>
+                <hr class="bg-secondary">
+                <p class="card-text"><strong class="text-dark">Address:</strong> {{ restaurant.address }}</p>
+                <p class="card-text"><strong class="text-dark">Phone:</strong> {{ restaurant.phone_number }}</p>
+                {% if restaurant.cuisine %}
+                    <p class="card-text"><strong class="text-dark">Cuisine:</strong> {{ restaurant.cuisine }}</p>
+                {% endif %}
+                {% if restaurant.price_range %}
+                    <p class="card-text"><strong class="text-dark">Price Range:</strong> {{ restaurant.price_range }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
-              <form id="booking-form" method="get" action="{% url 'bookings:booking_create' table.id %}">
-                  <input type="hidden" id="selected_table_id" name="table_id" value="{{ table.id }}">
-                  <button type="submit" id="book-button">Book Table {{ table.table_number }}</button>
-              </form>
-          </div>
-      {% endfor %}
-  </div>
+    <!-- Колонка с планом столов -->
+    <div class="col-lg-7 col-md-5 mb-4">
+        <div class="card shadow-lg h-100 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Choose a Table</h2>
+            </div>
+            <div class="card-body">
+                <div id="table-plan-container">
+                    <div id="table-plan">
+                        {% for table in restaurant.tables.all %}
+                            <div class="table-node"
+                                 style="left: {{ table.x_coordinate }}px; top: {{ table.y_coordinate }}px; width: {{ table.width }}px; height: {{ table.height }}px;"
+                                 data-table-id="{{ table.id }}">
+                                <span class="table-number">{{ table.table_number }}</span>
+                                {# Форма бронирования будет показана при выборе стола #}
+                                <form id="booking-form-{{ table.id }}" method="get" action="{% url 'bookings:booking_create' table.id %}" class="d-none booking-form">
+                                    <input type="hidden" name="table_id" value="{{ table.id }}">
+                                    <button type="submit" class="booking-btn btn btn-sm btn-light">Book</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Секция Контакты -->
+<div class="row mt-5 mb-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="contact-form-section shadow-lg">
+            <h2 class="text-center mb-4">Contact Us</h2>
+            <form method="post" action="{% url 'restaurants:restaurant_detail' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ contact_form.name.label_tag }}
+                    {{ contact_form.name }}
+                    {% if contact_form.name.errors %}
+                        <div class="invalid-feedback">{{ contact_form.name.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ contact_form.email.label_tag }}
+                    {{ contact_form.email }}
+                    {% if contact_form.email.errors %}
+                        <div class="invalid-feedback">{{ contact_form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ contact_form.subject.label_tag }}
+                    {{ contact_form.subject }}
+                    {% if contact_form.subject.errors %}
+                        <div class="invalid-feedback">{{ contact_form.subject.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ contact_form.message.label_tag }}
+                    {{ contact_form.message }}
+                    {% if contact_form.message.errors %}
+                        <div class="invalid-feedback">{{ contact_form.message.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const tables = document.querySelectorAll('.table');
-        const selectedTableIdInput = document.getElementById('selected_table_id');
-        const bookButton = document.getElementById('book-button');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableNodes = document.querySelectorAll('.table-node');
+        const allBookingForms = document.querySelectorAll('.booking-form');
 
-        tables.forEach(table => {
-            table.addEventListener('click', function() {
-                // Remove active class from all tables
-                tables.forEach(t => t.classList.remove('active'));
+        tableNodes.forEach(tableNode => {
+            tableNode.addEventListener('click', function(event) {
+                // Предотвращаем всплытие события, если кликнули на саму кнопку бронирования
+                if (event.target.classList.contains('booking-btn')) {
+                    return; // Если клик по кнопке, пусть форма отправляется
+                }
 
-                // Add active class to the selected table
-                this.classList.add('active');
+                const clickedTableId = this.dataset.tableId;
 
-                // Set the value of the hidden input
-                selectedTableIdInput.value = this.dataset.tableId;
+                // Снимаем выделение со всех столов и скрываем их формы
+                tableNodes.forEach(tn => {
+                    tn.classList.remove('selected');
+                    const form = tn.querySelector('.booking-form');
+                    if (form) form.classList.add('d-none');
+                });
 
-                // Enable the book button
-                bookButton.disabled = false;
+                // Выделяем текущий стол
+                this.classList.add('selected');
 
+                // Показываем кнопку бронирования для выбранного стола
+                const bookingForm = this.querySelector('.booking-form');
+                if (bookingForm) bookingForm.classList.remove('d-none');
             });
-        });
-
-            // Prevent the default form submission
-        const bookingForm = document.getElementById('booking-form');
-        bookingForm.addEventListener('submit', function(event) {
-            if (!selectedTableIdInput.value) {
-                alert('Please select a table.');
-                event.preventDefault();
-            }
         });
     });
 </script>

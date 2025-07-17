@@ -42,3 +42,14 @@ class Table(models.Model):
             self.latitude = location.latitude
             self.longitude = location.longitude
         super().save(*args, **kwargs)
+
+
+class AboutRestaurant(models.Model):
+    restaurant = models.OneToOneField(
+        Restaurant, on_delete=models.CASCADE, related_name="about"
+    )
+    content = models.TextField()
+    image = models.ImageField(upload_to="about_images/", blank=True, null=True)
+
+    def __str__(self):
+        return f"About section for {self.restaurant.name}"
