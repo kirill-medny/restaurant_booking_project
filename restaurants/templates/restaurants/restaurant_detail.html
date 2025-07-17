@@ -2,58 +2,108 @@
 {% load static %}
 
 {% block content %}
-  <h1>{{ restaurant.name }}</h1>
-  <p>{{ restaurant.description }}</p>
-  <p>Address: {{ restaurant.address }}</p>
-  <p>Phone: {{ restaurant.phone_number }}</p>
 
-  <h2>Choose a Table</h2>
-  <div id="table-plan" style="position: relative; width: 600px; height: 400px; background-image: url({% static 'images/restaurant_plan.png' %});">
-      {% for table in restaurant.tables.all %}
-          <div class="table" data-table-id="{{ table.id }}"
-               style="position: absolute; left: {{ table.x_coordinate }}px; top: {{ table.y_coordinate }}px; width: {{ table.width }}px; height: {{ table.height }}px; background-color: rgba(0, 123, 255, 0.5); cursor: pointer; text-align: center; color: white;">
-              {{ table.table_number }}
+<div class="row">
+    <!-- Колонка с информацией о ресторане -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h1 class="card-title">{{ restaurant.name }}</h1>
+                <p class="card-text text-muted">{{ restaurant.description }}</p>
+                <hr>
+                <p class="card-text"><strong>Address:</strong> {{ restaurant.address }}</p>
+                <p class="card-text"><strong>Phone:</strong> {{ restaurant.phone_number }}</p>
+                {% if restaurant.cuisine %}
+                    <p class="card-text"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</p>
+                {% endif %}
+                {% if restaurant.price_range %}
+                    <p class="card-text"><strong>Price Range:</strong> {{ restaurant.price_range }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
-              <form id="booking-form" method="get" action="{% url 'bookings:booking_create' table.id %}">
-                  <input type="hidden" id="selected_table_id" name="table_id" value="{{ table.id }}">
-                  <button type="submit" id="book-button">Book Table {{ table.table_number }}</button>
-              </form>
-          </div>
-      {% endfor %}
-  </div>
+    <!-- Колонка с планом столов -->
+    <div class="col-lg-8 col-md-6 mb-4">
+        <h2>Choose a Table</h2>
+        <div id="table-plan-container" class="shadow-sm">
+            <div id="table-plan">
+                {% for table in restaurant.tables.all %}
+                    <div class="table-node"
+                         style="left: {{ table.x_coordinate }}px; top: {{ table.y_coordinate }}px; width: {{ table.width }}px; height: {{ table.height }}px;"
+                         data-table-id="{{ table.id }}">
+                        <span class="table-number">{{ table.table_number }}</span>
+                        {# Кнопка бронирования будет показываться при выборе #}
+                        <form id="booking-form-{{ table.id }}" method="get" action="{% url 'bookings:booking_create' table.id %}" class="d-none booking-form">
+                            <input type="hidden" name="table_id" value="{{ table.id }}">
+                            <button type="submit" class="booking-btn">Book Table {{ table.table_number }}</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Секция Контакты -->
+<div class="row mt-5 mb-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="card shadow-sm p-4">
+            <h2 class="text-center mb-4">Contact Us</h2>
+            <form method="post" action="{% url 'restaurants:restaurant_detail' %}">
+                {% csrf_token %}
+                {{ contact_form.as_p }} {# Используем as_p для простоты, но можно стилизовать поля по отдельности #}
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg mt-3">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const tables = document.querySelectorAll('.table');
-        const selectedTableIdInput = document.getElementById('selected_table_id');
-        const bookButton = document.getElementById('book-button');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableNodes = document.querySelectorAll('.table-node');
+        let selectedTableId = null;
 
-        tables.forEach(table => {
-            table.addEventListener('click', function() {
-                // Remove active class from all tables
-                tables.forEach(t => t.classList.remove('active'));
+        tableNodes.forEach(tableNode => {
+            tableNode.addEventListener('click', function(event) {
+                // Предотвращаем всплытие события, если кликнули на саму кнопку бронирования
+                if (event.target.classList.contains('booking-btn')) {
+                    return;
+                }
 
-                // Add active class to the selected table
-                this.classList.add('active');
+                // Снимаем выделение со всех столов
+                tableNodes.forEach(tn => {
+                    tn.classList.remove('selected');
+                    // Скрываем кнопки бронирования у всех столов
+                    const hiddenForm = tn.querySelector('.booking-form');
+                    if(hiddenForm) hiddenForm.classList.add('d-none');
+                });
 
-                // Set the value of the hidden input
-                selectedTableIdInput.value = this.dataset.tableId;
+                // Выделяем текущий стол
+                this.classList.add('selected');
 
-                // Enable the book button
-                bookButton.disabled = false;
+                // Показываем кнопку бронирования для выбранного стола
+                const bookingForm = this.querySelector('.booking-form');
+                if(bookingForm) bookingForm.classList.remove('d-none');
 
+                // Если нужно, можно обновить скрытое поле в форме (хотя action уже установлен)
+                // const selectedTableIdInput = document.getElementById('selected_table_id'); // Если форма одна на все
+                // if (selectedTableIdInput) {
+                //     selectedTableIdInput.value = this.dataset.tableId;
+                // }
             });
         });
 
-            // Prevent the default form submission
-        const bookingForm = document.getElementById('booking-form');
-        bookingForm.addEventListener('submit', function(event) {
-            if (!selectedTableIdInput.value) {
-                alert('Please select a table.');
-                event.preventDefault();
-            }
-        });
+        // Если форма одна и скрыта:
+        // const bookingForm = document.getElementById('booking-form'); // Если форма одна, не в каждом table-node
+        // bookingForm.addEventListener('submit', function(event) {
+        //     if (!selectedTableId) { // Если selectedTableId не обновляется через JS
+        //         alert('Please select a table.');
+        //         event.preventDefault();
+        //     }
+        // });
     });
 </script>
 

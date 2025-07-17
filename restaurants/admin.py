@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Restaurant, Table
+from .models import AboutRestaurant, Restaurant, Table
 
 
 @admin.register(Restaurant)
@@ -17,3 +17,8 @@ class TableAdmin(admin.ModelAdmin):
         "x_coordinate",
         "y_coordinate",
     )
+
+
+@admin.register(AboutRestaurant)
+class AboutRestaurantAdmin(admin.ModelAdmin):
+    list_display = ("restaurant", "content", "image")

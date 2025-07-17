@@ -1,26 +1,121 @@
+/* static/css/style.css */
 body {
-    font-family: sans-serif;
-}
-
-nav {
-    background-color: #f0f0f0;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
-nav a {
-    margin-right: 10px;
-    text-decoration: none;
+    background-color: #f4f7f6; /* Легкий фон для всего сайта */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
 }
 
-.table {
-    cursor: pointer;
-    text-align: center;
-    color: white;
-    background-color: rgba(0, 123, 255, 0.5);
+/* Навигация уже стилизована Bootstrap */
+.navbar {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.table.active {
-    background-color: rgba(0, 0, 255, 0.8);
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+/* Стили для секций */
+h1, h2, h3 {
+    color: #0056b3; /* Темно-синий заголовок */
+}
+
+.card {
+    border: none; /* Убираем стандартную границу карт, полагаясь на тени */
+    border-radius: 10px;
+}
+
+.card-title {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #0056b3;
+}
+
+.card-text strong {
+    color: #343a40; /* Более темный цвет для меток */
+}
+
+/* Стиль для выделенных столов */
+.table-node.selected {
+    border: 2px solid #ffc107; /* Желтая рамка для выделенного столика */
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
+}
+
+/* Контактная форма */
+.contact-form-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.contact-form-section h2 {
+    color: #0056b3;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.25rem rgba(128, 189, 255, 0.25);
+}
+
+.btn-primary {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #004085;
+    transform: translateY(-1px);
+}
+
+/* Стили для сообщений об ошибках/успехе (если будете их добавлять) */
+.alert {
+    border-radius: 8px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Для отзывчивости плана столов */
+@media (max-width: 768px) {
+    .table-node {
+        font-size: 0.7em;
+        height: 30px !important; /* Принудительно уменьшить высоту */
+        width: 30px !important; /* Принудительно уменьшить ширину */
+    }
+    .table-node .booking-btn {
+        font-size: 0.6em;
+        padding: 1px 3px;
+    }
+    #table-plan-container {
+        padding-top: 80%; /* Больше высоты на маленьких экранах */
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-brand {
+        font-size: 1.1em;
+    }
+    .card-title {
+        font-size: 1.5em;
+    }
 }

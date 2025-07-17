@@ -10,7 +10,7 @@
         {% if booking.comments %}
           <p>Comments: {{ booking.comments }}</p>
         {% endif %}
-        <a href="{% url 'booking_cancel' booking.id %}">Cancel Booking</a>
+        <a href="{% url 'bookings:booking_cancel' booking.id %}">Cancel Booking</a>
       </li>
     {% endfor %}
   </ul>

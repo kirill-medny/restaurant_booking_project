@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>About {{ restaurant.name }}</h1>
+  {% if about_info %}
+    <p>{{ about_info.content }}</p>
+    {% if about_info.image %}
+      <img src="" alt="Restaurant Image" style="max-width: 500px; height: auto;">
+    {% endif %}
+  {% else %}
+    <p>Restaurant information is not yet available.</p>
+  {% endif %}
+{% endblock %}

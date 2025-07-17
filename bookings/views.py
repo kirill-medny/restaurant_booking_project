@@ -17,7 +17,9 @@ def booking_create(request, table_id):
             booking.user = request.user
             booking.table = table
             booking.save()
-            return redirect("user_bookings")  # Перенаправление в личный кабинет
+            return redirect(
+                "bookings:user_bookings"
+            )  # Перенаправление в личный кабинет
     else:
         form = BookingForm(initial={"table": table})
     return render(request, "bookings/booking_form.html", {"form": form, "table": table})
@@ -33,4 +35,4 @@ def user_bookings(request):
 def booking_cancel(request, booking_id):
     booking = get_object_or_404(Booking, pk=booking_id, user=request.user)
     booking.delete()
-    return redirect("user_bookings")
+    return redirect("bookings:user_bookings")
