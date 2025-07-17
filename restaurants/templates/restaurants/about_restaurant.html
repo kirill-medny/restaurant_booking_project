@@ -2,13 +2,25 @@
 {% load static %}
 
 {% block content %}
-  <h1>About {{ restaurant.name }}</h1>
-  {% if about_info %}
-    <p>{{ about_info.content }}</p>
-    {% if about_info.image %}
-      <img src="" alt="Restaurant Image" style="max-width: 500px; height: auto;">
-    {% endif %}
-  {% else %}
-    <p>Restaurant information is not yet available.</p>
-  {% endif %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-lg border-primary h-100">
+            <div class="card-header bg-primary text-white">
+                <h1 class="card-title mb-0">About {{ restaurant.name }}</h1>
+            </div>
+            <div class="card-body">
+                {% if about_info %}
+                    <p class="card-text">{{ about_info.content }}</p>
+                    {% if about_info.image %}
+                      <div class="text-center my-4">
+                          <img src="" alt="Restaurant Image" class="img-fluid rounded shadow-sm" style="max-height: 400px;">
+                      </div>
+                    {% endif %}
+                {% else %}
+                    <p class="card-text text-muted">Restaurant information is not yet available. Please check back soon!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

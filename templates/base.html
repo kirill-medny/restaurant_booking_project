@@ -1,99 +1,236 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Restaurant Booking{% endblock %}</title>
     <!-- Bootstrap CSS -->
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!-- Ваш кастомный CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        /* Дополнительные стили для плана столов */
+        /* Переопределяем некоторые стили Bootstrap для более приятного вида */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa; /* Светлый фон */
+            color: #333;
+        }
+
+        /* Навигационная панель */
+        .navbar {
+            background-color: #007bff !important; /* Основной синий цвет */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #fff !important; /* Белый текст на navbar */
+        }
+        .navbar-nav .nav-link {
+            color: #fff !important; /* Белый текст ссылок */
+            transition: color 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #e9ecef !important; /* Светлее при наведении */
+        }
+        .navbar-toggler {
+            border-color: #fff; /* Белая кнопка-гамбургер */
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='4' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Карточки */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #0056b3; /* Темно-синий для заголовков */
+        }
+        .card-text strong {
+            color: #343a40;
+        }
+
+        /* План столов */
         #table-plan-container {
             position: relative;
-            max-width: 100%; /* Адаптивность */
-            margin: 20px auto; /* Центрирование */
+            max-width: 100%;
+            margin: 20px auto;
             border: 1px solid #ccc;
-            overflow: hidden; /* Чтобы не вылезали элементы */
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #e9ecef; /* Светлый фон для плана */
         }
 
         #table-plan {
             position: relative;
-            width: 100%; /* Будет растягиваться внутри контейнера */
-            padding-top: 60%; /* Примерное соотношение сторон, можно настроить */
+            width: 100%;
+            padding-top: 60%; /* Примерное соотношение сторон, может потребоваться подстройка */
             background-image: url({% static 'images/restaurant_plan.png' %});
-            background-size: cover; /* Масштабирование изображения */
+            background-size: cover;
             background-position: center;
         }
 
         .table-node {
             position: absolute;
-            background-color: rgba(0, 123, 255, 0.5); /* Синий полупрозрачный */
+            background-color: rgba(0, 123, 255, 0.5);
             border: 1px solid rgba(0, 0, 0, 0.3);
             color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-weight: bold;
-            font-size: 0.9em;
-            z-index: 10; /* Поверх фона */
+            transition: all 0.3s ease;
+            z-index: 10;
             border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
         }
 
-        .table-node.active {
-            background-color: rgba(0, 0, 255, 0.8); /* Более темный при выборе */
-            border-color: #fff;
-        }
-
-        .table-node:hover {
-            background-color: rgba(0, 100, 200, 0.7); /* При наведении */
+        .table-node.selected {
+            background-color: rgba(0, 100, 200, 0.8);
+            border: 2px solid #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
         }
 
         .table-node .booking-btn {
             position: absolute;
-            bottom: 5px; /* Разместить кнопку под номером стола */
+            bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.7em; /* Меньший шрифт для кнопки */
-            padding: 2px 5px; /* Меньший паддинг */
+            font-size: 0.7em;
+            padding: 2px 5px;
             background-color: white;
             color: #007bff;
             border: none;
             border-radius: 3px;
             cursor: pointer;
-            display: none; /* Скрыта по умолчанию, показывается при выборе */
+            display: none;
             z-index: 15;
         }
 
         .table-node.selected .booking-btn {
-            display: block; /* Показываем кнопку, если стол выбран */
+            display: block;
         }
 
-        /* Стили для формы бронирования */
-        .booking-form-section {
-            background-color: #f8f9fa; /* Светлый фон */
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
+        /* Контактная форма */
+        .contact-form-section {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
         }
-        .booking-form-section h3 {
-            margin-bottom: 20px;
+        .contact-form-section h2 {
+            color: #0056b3;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        /* Таблица для "My Bookings" */
+        .bookings-table th,
+        .bookings-table td {
+            vertical-align: middle;
+            border: none; /* Убираем стандартные границы */
+        }
+        .bookings-table thead th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            border-bottom: 2px solid #0056b3;
+        }
+        .bookings-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa; /* Чередование цветов строк */
+        }
+        .bookings-table tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+        .bookings-table .action-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: color 0.2s ease;
+        }
+        .bookings-table .action-links a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        .bookings-table .cancel-link {
+            color: #dc3545; /* Красный для отмены */
+        }
+        .bookings-table .cancel-link:hover {
+            color: #c82333;
+        }
+
+        /* Футер */
+        .footer {
+            background-color: #343a40; /* Темный фон */
+            color: #ffffff;
+            padding: 30px 0;
+            margin-top: 40px; /* Отступ сверху */
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .footer a:hover {
+            color: #cccccc;
+            text-decoration: underline;
+        }
+
+        /* Адаптивность для плана столов */
+        @media (max-width: 768px) {
+            .table-node {
+                font-size: 0.7em;
+                height: 30px !important;
+                width: 30px !important;
+            }
+            .table-node .booking-btn {
+                font-size: 0.6em;
+                padding: 1px 3px;
+            }
+            #table-plan-container {
+                padding-top: 80%; /* Увеличиваем высоту на малых экранах */
+            }
+            .card {
+                margin-bottom: 20px; /* Добавляем отступ между карточками на мобильных */
+            }
+            .navbar-nav {
+                margin-top: 10px; /* Отступ для ссылок меню на мобильных */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-brand {
+                font-size: 1.1em;
+            }
+            .card-title {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'restaurants:restaurant_detail' %}">Restaurant Booking</a>
+    <!-- Навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'restaurants:restaurant_detail' %}"><strong>Restaurant Booking</strong></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'restaurants:restaurant_detail' %}">Home</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'restaurants:about_restaurant' %}">About Us</a>
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
@@ -110,21 +247,29 @@
                             <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
                         </li>
                     {% endif %}
-                    <li class="nav-item">
-                          <a class="nav-link" href="{% url 'restaurants:about_restaurant' %}">About Us</a>
-                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <hr>
-    <div class="container mt-4"> {# Добавьте контейнер для контента #}
+
+    <div class="container mt-4 mb-5"> {# Основной контент с отступами #}
         {% block content %}
         {% endblock %}
     </div>
 
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Restaurant Booking. All rights reserved.</p>
+            <p>
+                <a href="#">Privacy Policy</a> |
+                <a href="#">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+
     <!-- Bootstrap JS -->
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGYpM+oHRfA+W0Y/r/b6djsB4vFp6N+w9vM7W8e9V" crossorigin="anonymous"></script>
     <!-- Ваш кастомный JS -->
     <script src="{% static 'js/script.js' %}"></script>
 </body>

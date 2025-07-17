@@ -1,17 +1,44 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-  <h1>My Bookings</h1>
-  <ul>
-    {% for booking in bookings %}
-      <li>
-        {{ booking.table.restaurant.name }} - {{ booking.date }} at {{ booking.time }}
-        (Guests: {{ booking.number_of_guests }})
-        {% if booking.comments %}
-          <p>Comments: {{ booking.comments }}</p>
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <h1 class="text-center mb-4 card-title">My Bookings</h1>
+
+        {% if bookings %}
+            <div class="bookings-list">
+                {% for booking in bookings %}
+                    <div class="card mb-3 shadow-sm booking-card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ booking.table.restaurant.name }}</h5>
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <p class="card-text mb-1"><strong>Date:</strong> {{ booking.date }}</p>
+                                    <p class="card-text mb-1"><strong>Time:</strong> {{ booking.time }}</p>
+                                    <p class="card-text mb-1"><strong>Guests:</strong> {{ booking.number_of_guests }}</p>
+                                    {% if booking.comments %}
+                                        <p class="card-text mt-2 text-muted fst-italic">"{{ booking.comments }}"</p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    {# Ссылки на действия #}
+                                    <div class="action-links">
+                                        {# Если есть возможность редактирования, добавьте сюда ссылку #}
+                                        <a href="{% url 'bookings:booking_cancel' booking.id %}" class="cancel-link">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center mt-5">
+                <p class="fs-5">You have no upcoming bookings.</p>
+                <a href="{% url 'restaurants:restaurant_detail' %}" class="btn btn-primary btn-lg">Book a Table</a>
+            </div>
         {% endif %}
-        <a href="{% url 'bookings:booking_cancel' booking.id %}">Cancel Booking</a>
-      </li>
-    {% endfor %}
-  </ul>
+    </div>
+</div>
 {% endblock %}
