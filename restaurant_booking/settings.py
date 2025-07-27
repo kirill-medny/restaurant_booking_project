@@ -60,7 +60,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME"),  # Имя вашей базы данных
         "USER": os.getenv("DB_USER"),  # Имя пользователя PostgreSQL
-        "PASSWORD": "simplepassword123",  # Пароль пользователя PostgreSQL
+        "PASSWORD": os.getenv("DB_PASSWORD"),  # Пароль пользователя PostgreSQL
         "HOST": os.getenv("DB_HOST"),  # Хост базы данных (обычно localhost)
         "PORT": os.getenv("DB_PORT"),  # Порт базы данных (обычно 5432)
     }

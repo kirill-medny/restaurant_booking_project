@@ -1,9 +1,11 @@
+# Dockerfile.db
 FROM postgres:16.9
 
-RUN apt-get update && apt-get install -y gettext-base postgresql-client
+# Устанавливаем необходимые пакеты для PostgreSQL (Debian-based)
+# gettext-base нужен для некоторых утилит, postgresql-client для подключения
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gettext-base \
+    postgresql-client \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dockerize
-RUN apt-get update && apt-get install -y wget
-RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz \
-    && rm dockerize-linux-amd64-v0.6.1.tar.gz

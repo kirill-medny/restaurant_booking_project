@@ -13,15 +13,17 @@ RUN pip install -U poetry
 # Устанавливаем зависимости (без корня проекта)
 RUN poetry install --no-interaction --no-root
 
-# Копируем все файлы проекта *ДО* запуска manage.py
+# Копируем все файлы проекта
 COPY . .
 
-# Активируем виртуальное окружение и запускаем manage.py
-RUN poetry env info  # Узнаем путь к виртуальному окружению
-RUN . $(poetry env info -p)/bin/activate && python manage.py collectstatic --noinput
-
-# Копируем скрипт entrypoint
+# Копируем скрипт entrypoint и делаем его исполняемым
 COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+# Собираем статику, если это нужно делать во время сборки образа.
+# Если статику собирать при запуске контейнера, закомментируйте эти строки.
+# RUN poetry env info  # Узнаем путь к виртуальному окружению
+# RUN . $(poetry env info -p)/bin/activate && python manage.py collectstatic --noinput
 
 # Задаем entrypoint
 ENTRYPOINT ["./entrypoint.sh"]
